@@ -1,5 +1,7 @@
 ## Шпаргалка по Redux на русском
 
+# Общий обзор и понятия
+
 1. ## Создаем проект
    [cra-template-redux](https://github.com/reduxjs/cra-template-redux)
 
@@ -87,4 +89,79 @@ const addTodoAction = {
   type: 'todos/todoAdded',
   payload: 'Buy milk'
 }
+```
+
+Как правило, action делается в виде функции, которая создает и возвращает объект action:
+
+```
+const addTodo = text => {
+  return {
+    type: 'todos/todoAdded',
+    payload: text
+  }
+}
+```
+
+## Reducers
+
+Редьюсер - это функция, которая получает текущий state и объект action, где описывается, как изменить state (если необходимо) и вернуть новый `(state, action) => newState`. Короче редьюсер - это обработчик событий в зависимости от типа полученного действия.
+
+### Правила редьюсеров:
+
+- всегда рассчитывают новое состояние на основе старого state и action;
+- не модифицируют текущий sate, а только копию (иммутабельность);
+- не выполняют асинхронную логику, рандомные рассчеты или вызовы посторонних эффектов.
+
+### Логика редьюсера:
+
+Проверка состояния объекта action
+
+? создать копию state, внести в нее новые значения, вернуть
+
+: вернуть текущий state без изменений.
+
+```
+const initialState = { value: 0 }
+
+function counterReducer(state = initialState, action) {
+  // проверяем состояние
+  if (action.type === 'counter/increment') {
+    // если да, делаем копию `state`
+    return {
+      ...state,
+      // обновляем копию с новыми значениями
+      value: state.value + 1
+    }
+  }
+  // если нет, возвращаем все без изменений
+  return state
+}
+```
+
+Можно провести параллель в работе Redux reducer и Array.reduce(). Разница у них в том, что Array.reduce() происходит один раз, а Redux reducer выполняется постоянно.
+
+## Store
+
+Текущее состояние приложения хранится в ОБЪЕКТЕ `store`
+
+`store` создается путем присвоения редьюсера и имеет метод `getState`, который возвращает текущее значение стейта.
+
+### Dispatch
+
+Метод `store`, который обновляет state и передает в action:
+
+store.dispatch()
+
+Можно воспринимать dispatch, как триггер события.
+
+### Selectors
+
+Функции, извлекающие фрагменты информации из store state:
+
+```
+const selectCounterValue = state => state.value
+
+const currentValue = selectCounterValue(store.getState())
+console.log(currentValue)
+// 2
 ```
