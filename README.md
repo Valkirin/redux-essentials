@@ -1,68 +1,90 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+## Шпаргалка по Redux на русском
 
-## Available Scripts
+1. ## Создаем проект
+   [cra-template-redux](https://github.com/reduxjs/cra-template-redux)
 
-In the project directory, you can run:
+### `npx create-react-app my-app --template redux`
 
-### `yarn start`
+2. ## Ставим расширения на Chrome:
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+   [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+   [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en)
 
-### `yarn test`
+3. ## Концепт Redux:
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### state
 
-### `yarn build`
+истинный источник движущей силы приложения;
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### view
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+описание интерфейса на основе текущего состояния (state);
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### actions
 
-### `yarn eject`
+события в приложении на основе пользовательских действий, которые вызывают изменение состояния.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Пример движения данных:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+state описывает состояние приложения в определенное время -> view отображает state -> когда происходит action (например нажатие на кнопку) - state обновляется в зависимости от того, что произошло -> view обновляет отображение на основе нового state
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+![data flow](./one-way-data-flow.png 'flow')
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Основная идея Redux
 
-## Learn More
+Единое централизованное место хранения глобального состояния в приложении и контроль (предсказуемость) поведения кода и шаблонов.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Immutability означает неизменность
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Объекты и массивы JavaScript, изменяемы (mutable) по умолчанию.
+Для придания значениям неизменности необходимо создавать копии объектов и затем модифицировать эти копии.
 
-### Code Splitting
+Для этого можно использовать "спред-операторы", а также методы массива, которые возвращают новые копии массива вместо изменения исходного массива:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+```
+const obj = {
+  a: {
+    c: 3
+  },
+  b: 2
+}
 
-### Analyzing the Bundle Size
+const obj2 = {
+  // копируем obj
+  ...obj,
+  // перезаписываем a
+  a: {
+    // копируем obj.a
+    ...obj.a,
+    // перезаписываем c
+    c: 42
+  }
+}
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+const arr = ['a', 'b']
+// создаем новую копию arr и добавляем в конец "c"
+const arr2 = arr.concat('c')
 
-### Making a Progressive Web App
+// либо делаем копию оригинального arr:
+const arr3 = arr.slice()
+// и мутируем копию:
+arr3.push('c')
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+В Redux ожидается, что все обновления state иммутабельны.
 
-### Advanced Configuration
+## Actions
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+Просто объект JS, который имеет поле `type`. О нем можно думать, как о событии, которое описывает, что что-то произошло в приложении.
 
-### Deployment
+Поле `type` - это всегда строка, которая получает путь, где описан action, например "todos/todoAdded", где todos - это функция или категория, которой принадлежит действие, а todoAdded - непосредственно действие.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+Объект может принимать и другую информацию о действии. По соглашению конвенции дополнительная информация вводится в поле `payload`:
 
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+```
+const addTodoAction = {
+  type: 'todos/todoAdded',
+  payload: 'Buy milk'
+}
+```
