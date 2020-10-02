@@ -165,3 +165,18 @@ const currentValue = selectCounterValue(store.getState())
 console.log(currentValue)
 // 2
 ```
+
+# Структура приложения
+
+/src
+
+- index.js: сьартовая точка приложения
+- App.js: реакт компонент высшего уровня
+- /app
+  - store.js: хранилище state
+- /features
+  - /counter
+    - Counter.js: UI
+    - counterSlice.js: логика
+
+[Детальный разбор!](https://redux-docs.netlify.app/tutorials/essentials/part-2-app-structure)
