@@ -1,4 +1,6 @@
-## Шпаргалка по Redux или Redux с нуля в одном месте на русском
+## Стартовый набор Redux
+
+Частичный перевод официальной документации [Redux]()
 
 # Общий обзор и понятия
 
@@ -190,9 +192,7 @@ console.log(currentValue)
     - Counter.js: UI
     - counterSlice.js: логика
 
-[Детальный разбор](https://redux-docs.netlify.app/tutorials/essentials/part-2-app-structure) + примеры работы с консолью
-
-## TL;DR
+[Детальный разбор + примеры работы с консолью](https://redux-docs.netlify.app/tutorials/essentials/part-2-app-structure)
 
 ## Создаем Redux Store
 
@@ -369,21 +369,26 @@ const fetchUserById = userId => {
 
 ## Создание компонента
 
-В шаблоне он в этом месте `features/counter/Counter.js`:
+В шаблоне он в этом месте `features/counter/Counter.js`
 
-### Читаем данные через useSelector
+Импортируем хуки:
 
-Первым делом импортируем `{useState}` дабы включить хуки.
+```
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+```
 
 \*Уточнение: Redux имеет [кастомные](https://react-redux.js.org/api/hooks) хуки.
 
-state из слайса экспортируется
+### Читаем данные через useSelector
+
+state из слайса (./counterSlice.js) экспортируется
 
 ```
 export const selectCount = (state) => state.counter.value
 ```
 
-в компонент UI
+и используется инлайново там, где нам нужно (./Counter.js)
 
 ```
 const count = useSelector(selectCount);
@@ -396,3 +401,75 @@ const count = selectCount(store.getState())
 ```
 
 ### Передаем данные через useDispatch
+
+Так как доступа к `store` нету - используем кастомный хук
+
+```
+import { useSelector, useDispatch } from 'react-redux';
+...
+const dispatch = useDispatch();
+...
+<button
+    className={styles.button}
+    aria-label="Increment value"
+    onClick={() => dispatch(increment())}
+>
+...
+```
+
+## Компонент State
+
+Нет необходимости в передаче каждого `state` в `store`, если стейт используется только в одном месте.
+
+В шаблоне (features/counter/Counter.js)
+
+```
+...
+<div className={styles.row}>
+        <input
+          className={styles.textbox}
+          aria-label="Set increment amount"
+          value={incrementAmount}
+          onChange={e => setIncrementAmount(e.target.value)}
+        />
+        <button
+          className={styles.button}
+          onClick={() =>
+            dispatch(incrementByAmount(Number(incrementAmount) || 0))
+          }
+        >
+          Add Amount
+        </button>
+        <button
+          className={styles.asyncButton}
+          onClick={() => dispatch(incrementAsync(Number(incrementAmount) || 0))}
+        >
+          Add Async
+        </button>
+      </div>
+```
+
+из всего приложения `input` используется только здесь, поэтому нет преимуществ при сохранении его в глобальный `store` и можно использовать хук `useState` для обработки.
+
+Наш глобальный `state` должен храниться в `Redux store`, а локальный лучше оставлять в компоненте.
+
+### Чеклист по отправке в store:
+
+- Остальные части приложения заботятся об этих данных?
+- Нужно иметь возможность создавать дополнительные производные данные на основе этих исходных данных?
+- Используются ли одни и те же данные для управления несколькими компонентами?
+- Есть ли ценность в возможности восстановить это состояние до заданного момента времени (например, отладка путешествия во времени)?
+- Кэшировать данные (т. Е. Использовать то, что находится в состоянии, если оно уже есть, вместо повторного запроса)?
+- Нужно, чтобы эти данные были согласованными при горячей перезагрузке компонентов пользовательского интерфейса (которые могут потерять свое внутреннее состояние при замене)?
+
+## Передача Store
+
+```
+import { Provider } from 'react-redux'
+
+<Provider store={store}>
+    <App />
+  </Provider>
+```
+
+# Базовый поток данных Redux
