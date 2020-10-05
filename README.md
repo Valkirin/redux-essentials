@@ -211,6 +211,14 @@ import any from '../features/counter/counterSlice'
 
 будет работать.
 
+Важно просто указать, что здесь есть редьюсер:
+
+```
+export default configureStore({
+  reducer: () => ({}),
+})
+```
+
 ## Создаем Slice Reducers и Actions (Слайсим проект)
 
 Slice - это набор логики и событий для одной "фичи". Мы как-бы слайсим (разделяем) корневой state на несколько частей:
