@@ -473,3 +473,5 @@ import { Provider } from 'react-redux'
 ```
 
 # Базовый поток данных Redux
+
+Pending
