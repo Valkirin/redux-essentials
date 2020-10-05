@@ -173,12 +173,6 @@ console.log(currentValue)
 // 2
 ```
 
-### Subscribe
-
-Подписка на события:
-
-`store.subscribe()`
-
 # Структура приложения
 
 /src
@@ -471,7 +465,3 @@ import { Provider } from 'react-redux'
     <App />
   </Provider>
 ```
-
-# Базовый поток данных Redux
-
-Pending
