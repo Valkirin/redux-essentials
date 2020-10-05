@@ -473,3 +473,7 @@ import { Provider } from 'react-redux'
     <App />
   </Provider>
 ```
+
+Пока все.
+
+[Вот тут можно брать образец пошагового создания приложения](https://redux-docs.netlify.app/tutorials/essentials/part-3-data-flow)
